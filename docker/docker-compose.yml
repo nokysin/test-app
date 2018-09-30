@@ -1,39 +1,39 @@
 networks:
-  restfull_net:
+  editor_net:
     driver: bridge
 services:
-    nginx_restfull:
-      container_name: nginx_restfull
+    nginx_editor:
+      container_name: nginx_editor
       image: nginx:latest
       links:
-        - php_restfull
+        - php_editor
       networks:
-        - restfull_net
+        - editor_net
       ports:
         - "${NGINX_HOST_HTTP_PORT}:80"
       volumes:
-        - ..:/var/www/restfull
+        - ..:/var/www/editor
         - ${NGINX_CONFIG}:/etc/nginx
       labels:
-          org.label-schema.group: "restfull"
+          org.label-schema.group: "editor"
 
-    php_restfull:
+    php_editor:
       build:
         context: .
         dockerfile: ./php/Dockerfile
         args:
           - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}
-      container_name: php_restfull
+      container_name: php_editor
       expose:
         - '9000'
       networks:
-        - restfull_net
+        - editor_net
       volumes:
-        - ..:/var/www/restfull
+        - ..:/var/www/editor
         - ./php/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
         - ./php/php-ini-overrides.ini:/etc/php/7.2/cli/conf.d/99-overrides.ini
       labels:
-          org.label-schema.group: "restfull"
+          org.label-schema.group: "editor"
 
 version: '2'
 volumes: {}
