@@ -62,6 +62,16 @@ class BaseController
         ], $statusCode);
     }
 
+    protected function responseNotAllowed()
+    {
+        $statusCode = Response::HTTP_METHOD_NOT_ALLOWED;
+
+        $this->response([
+            'code'    => $statusCode,
+            'message' => Response::$statusTexts[$statusCode],
+        ], $statusCode);
+    }
+
     /**
      * @param $model
      */

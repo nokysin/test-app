@@ -22,7 +22,7 @@ class AuthController extends BaseController
     /**
      * @param array $params
      */
-    public function tokenAction($params)
+    public function tokenAction()
     {
         $login    = $this->getParam('login');
         $password = $this->getParam('password');

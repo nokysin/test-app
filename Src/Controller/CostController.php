@@ -40,13 +40,13 @@ class CostController extends BaseController
      *
      * @return string
      */
-    public function viewAction(array $params)
+    public function viewAction()
     {
 
         /** @var \Src\Repository\CostRepository $repository */
         $repository = $this->getRepository(Cost::class);
 
-        $id = array_key_exists('id', $params) ? $params['id'] : false;
+        $id = $this->getParam('id');
 
         $cost = $repository->findById($id);
 

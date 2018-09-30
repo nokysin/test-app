@@ -108,6 +108,16 @@ class Router implements IRouter
     }
 
     /**
+     * @return void
+     */
+    protected function methodInternalServerError()
+    {
+        $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        $this->sendErrorResponse($statusCode);
+    }
+
+    /**
      * @param \Core\Router\integer $statusCode
      */
     protected function sendErrorResponse(int $statusCode)
@@ -238,6 +248,7 @@ class Router implements IRouter
 
             if ($routeMethod !== $method) {
                 $this->methodNotAllowed();
+
                 return;
             }
 
@@ -249,14 +260,15 @@ class Router implements IRouter
                 return;
             }
 
-            if(true === $security) {
+            if (true === $security) {
                 $securityObj = new Security($this->getSecurityToken($params));
-                if(false === $securityObj->validate()) {
+                if (false === $securityObj->validate()) {
                     $this->methodUnauthorized();
+
                     return;
                 }
             }
-            
+
             $controller = $this->getNamespace() . $controller . 'Controller';
             if (class_exists($controller)) {
 
@@ -265,8 +277,13 @@ class Router implements IRouter
 
                 if (is_callable([$controllerObj, $action])) {
 
-                    $response = $controllerObj->{$action}($params);
+                    $response = $controllerObj->{$action}();
 
+                    if (!$response instanceof IResponse) {
+                        $this->methodInternalServerError();
+
+                        return;
+                    }
 
                     $response->send();
                 }
@@ -328,5 +345,21 @@ class Router implements IRouter
         $namespace = 'Src\Controller\\';
 
         return $namespace;
+    }
+
+    /**
+     * @return \Core\Router\Request
+     */
+    public function getRequest(): IRequest
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return \Core\Http\Response\Response
+     */
+    public function getResponse(): IResponse
+    {
+        return $this->response;
     }
 }
